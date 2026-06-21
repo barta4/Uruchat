@@ -1,6 +1,7 @@
 .bundle
 .env
 .env.*
+env
 docker-compose.*
 docker/Dockerfile
 docker/dockerfiles
