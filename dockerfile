@@ -1,5 +1,5 @@
 # =============================================================================
-# Uruchat - Imagen Docker basada en Chatwoot v4.15.1 con branding Uruchat
+# Uruchat - Imagen Docker basada en Chatwoot v4.18.0 con branding Uruchat
 # =============================================================================
 #
 # Este archivo es un puntero al Dockerfile oficial de Chatwoot (multi-stage).
@@ -16,7 +16,7 @@
 #      docker login -u alfredobartaburu
 #
 # 2) Construir la imagen (desde la raiz del repo):
-#      docker build -f docker/Dockerfile -t alfredobartaburu/uruchat:v2.0.0 .
+#      docker build -f docker/Dockerfile -t alfredobartaburu/uruchat:v4.18.0 .
 #
 #    Notas:
 #      - Primer build: ~15-30 min (compila gems de Ruby y assets de Vite).
@@ -24,13 +24,13 @@
 #      - Necesita ~4GB de RAM libres durante el build.
 #
 # 3) (Opcional) Probar la imagen localmente antes de subir:
-#      docker run --rm -p 3000:3000 alfredobartaburu/uruchat:v2.0.0
+#      docker run --rm -p 3000:3000 alfredobartaburu/uruchat:v4.18.0
 #
 # 4) Subir a Docker Hub:
-#      docker push alfredobartaburu/uruchat:v2.0.0
+#      docker push alfredobartaburu/uruchat:v4.18.0
 #
-#    Tip: tambien sube un tag "latest" para el compose por defecto:
-#      docker tag alfredobartaburu/uruchat:v2.0.0 alfredobartaburu/uruchat:latest
+#    Tip: tambien sube un tag "latest":
+#      docker tag alfredobartaburu/uruchat:v4.18.0 alfredobartaburu/uruchat:latest
 #      docker push alfredobartaburu/uruchat:latest
 #
 # 5) En produccion, actualiza docker-compose.production.yaml con el nuevo tag
@@ -54,4 +54,4 @@
 # =============================================================================
 
 # Sin FROM real: este archivo solo documenta el flujo.
-# Para construir, usa: docker build -f docker/Dockerfile -t alfredobartaburu/uruchat:v2.0.0 .
+# Para construir, usa: docker build -f docker/Dockerfile -t alfredobartaburu/uruchat:v4.18.0 .
