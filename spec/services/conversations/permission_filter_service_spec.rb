@@ -44,6 +44,63 @@ RSpec.describe Conversations::PermissionFilterService do
       end
     end
 
+
+    context 'when the agent belongs to a custom role with conversation_manage' do
+      let(:role) { create(:custom_role, account: account, permissions: %w[conversation_manage]) }
+      let(:custom_agent) { create(:user, account: account, role: :agent) }
+
+      before { custom_agent.account_users.find_by(account: account).update!(custom_role_id: role.id) }
+
+      it 'returns all conversations' do
+        result = described_class.new(account.conversations, custom_agent, account).perform
+
+        expect(result).to include(conversation)
+        expect(result).to include(another_conversation)
+      end
+    end
+
+    context 'when the agent belongs to a custom role with unassigned and participating permissions' do
+      let(:role) { create(:custom_role, account: account, permissions: %w[conversation_unassigned_manage conversation_participating_manage]) }
+      let(:custom_agent) { create(:user, account: account, role: :agent) }
+
+      before do
+        custom_agent.account_users.find_by(account: account).update!(custom_role_id: role.id)
+        create(:inbox_member, user: custom_agent, inbox: inbox)
+        conversation.update!(assignee_id: nil)
+        another_conversation.update!(assignee_id: create(:user, account: account).id)
+        create(:conversation_participant, conversation: another_conversation, account: account, user: custom_agent)
+      end
+
+      it 'returns unassigned, own and participating conversations' do
+        result = described_class.new(account.conversations, custom_agent, account).perform
+
+        expect(result).to include(conversation)
+        expect(result).to include(another_conversation)
+      end
+
+      it 'excludes conversations outside the permitted scope' do
+        third_agent = create(:user, account: account, role: :agent)
+        excluded = create(:conversation, account: account, inbox: inbox)
+        excluded.update!(assignee_id: third_agent.id)
+
+        result = described_class.new(account.conversations, custom_agent, account).perform
+
+        expect(result).not_to include(excluded)
+      end
+    end
+
+    context 'when the agent belongs to a custom role without conversation permissions' do
+      let(:role) { create(:custom_role, account: account, permissions: %w[contact_manage]) }
+      let(:custom_agent) { create(:user, account: account, role: :agent) }
+
+      before { custom_agent.account_users.find_by(account: account).update!(custom_role_id: role.id) }
+
+      it 'returns no conversations' do
+        result = described_class.new(account.conversations, custom_agent, account).perform
+
+        expect(result.count).to eq(0)
+      end
+    end
     context 'when plan_hint_selective_filter is enabled' do
       let!(:other_inbox) { create(:inbox, account: account) }
       let!(:inaccessible_conversation) { create(:conversation, account: account, inbox: other_inbox) }

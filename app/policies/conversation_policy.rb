@@ -8,13 +8,25 @@ class ConversationPolicy < ApplicationPolicy
   end
 
   def show?
-    administrator? || agent_bot? || agent_can_view_conversation?
+    return true if administrator? || agent_bot?
+    return custom_role_conversation_access? if custom_role_member?
+
+    inbox_access? || team_access?
   end
 
   private
 
-  def agent_can_view_conversation?
-    inbox_access? || team_access?
+  def custom_role_conversation_access?
+    return true if has_permission?('conversation_manage')
+    return true if assigned_to_user? && conversation_permission_holder?
+    return true if has_permission?('conversation_unassigned_manage') && record.assignee_id.blank?
+    return true if has_permission?('conversation_participating_manage') && participant?
+
+    false
+  end
+
+  def conversation_permission_holder?
+    %w[conversation_manage conversation_unassigned_manage conversation_participating_manage].any? { |permission| has_permission?(permission) }
   end
 
   def administrator?

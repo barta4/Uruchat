@@ -4,7 +4,7 @@ class PortalPolicy < ApplicationPolicy
   end
 
   def update?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def show?
@@ -12,11 +12,11 @@ class PortalPolicy < ApplicationPolicy
   end
 
   def edit?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def create?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def destroy?
@@ -24,11 +24,11 @@ class PortalPolicy < ApplicationPolicy
   end
 
   def logo?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def send_instructions?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def ssl_status?

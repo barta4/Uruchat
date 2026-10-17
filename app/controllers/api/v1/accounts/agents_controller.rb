@@ -13,6 +13,7 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
       role: new_agent_params['role'],
       availability: new_agent_params['availability'],
       auto_offline: new_agent_params['auto_offline'],
+      custom_role_id: new_agent_params['custom_role_id'],
       inviter: current_user,
       account: Current.account
     )
@@ -24,7 +25,7 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
 
   def update
     @agent.update!(agent_params.slice(:name).compact)
-    @agent.current_account_user.update!(agent_params.slice(*account_user_attributes).compact)
+    @agent.current_account_user.update!(account_user_update_attributes)
   end
 
   def destroy
@@ -56,11 +57,19 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
   end
 
   def account_user_attributes
-    [:role, :availability, :auto_offline]
+    [:role, :availability, :auto_offline, :custom_role_id]
+  end
+
+  # keep nil custom_role_id so an agent can be moved back to a standard role
+  def account_user_update_attributes
+    attributes = agent_params.slice(*account_user_attributes).compact
+    return attributes unless agent_params.key?(:custom_role_id)
+
+    attributes.to_h.merge(custom_role_id: agent_params[:custom_role_id])
   end
 
   def allowed_agent_params
-    [:name, :email, :role, :availability, :auto_offline]
+    [:name, :email, :role, :availability, :auto_offline, :custom_role_id]
   end
 
   def agent_params
@@ -68,7 +77,7 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
   end
 
   def new_agent_params
-    params.require(:agent).permit(:email, :name, :role, :availability, :auto_offline)
+    params.require(:agent).permit(:email, :name, :role, :availability, :auto_offline, :custom_role_id)
   end
 
   def agents

@@ -1,10 +1,10 @@
 class ContactPolicy < ApplicationPolicy
   def index?
-    true
+    has_permission?('contact_manage')
   end
 
   def active?
-    true
+    has_permission?('contact_manage')
   end
 
   def import?
@@ -16,35 +16,35 @@ class ContactPolicy < ApplicationPolicy
   end
 
   def search?
-    true
+    has_permission?('contact_manage')
   end
 
   def filter?
-    true
+    has_permission?('contact_manage')
   end
 
   def update?
-    true
+    has_permission?('contact_manage')
   end
 
   def contactable_inboxes?
-    true
+    has_permission?('contact_manage')
   end
 
   def destroy_custom_attributes?
-    true
+    has_permission?('contact_manage')
   end
 
   def show?
-    true
+    has_permission?('contact_manage')
   end
 
   def create?
-    true
+    has_permission?('contact_manage')
   end
 
   def avatar?
-    true
+    has_permission?('contact_manage')
   end
 
   def destroy?

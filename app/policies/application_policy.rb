@@ -41,6 +41,19 @@ class ApplicationPolicy
     Pundit.policy_scope!(user_context, record.class)
   end
 
+  # Users assigned to a custom role are governed by the role permissions.
+  # Administrators and plain agents keep the default behaviour.
+  def custom_role_member?
+    account_user&.custom_role_id.present?
+  end
+
+  def has_permission?(permission)
+    return true if account_user&.administrator?
+    return true unless custom_role_member?
+
+    account_user.custom_role.permissions.include?(permission)
+  end
+
   class Scope
     attr_reader :user_context, :user, :scope, :account, :account_user
 

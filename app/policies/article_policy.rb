@@ -4,19 +4,19 @@ class ArticlePolicy < ApplicationPolicy
   end
 
   def update?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def show?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def edit?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def create?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 
   def destroy?
@@ -24,7 +24,7 @@ class ArticlePolicy < ApplicationPolicy
   end
 
   def reorder?
-    @account_user.administrator?
+    has_permission?('knowledge_base_manage')
   end
 end
 
